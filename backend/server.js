@@ -7,35 +7,48 @@ dotenv.config();
 
 const app = express();
 
+// Middlewares
 app.use(cors());
 app.use(express.json());
 
-// ✅ DB Connection
-connectDB();
-
-// ✅ Test Route (Optional)
+// ✅ Test Route (optional, can delete later)
 const Movie = require("./models/Movie");
 
 app.get("/test-movie", async (req, res) => {
-  const movie = await Movie.create({
-    title: "Test Movie",
-    genre: "Action"
-  });
-
-  res.json(movie);
+  try {
+    const movie = await Movie.create({
+      title: "Test Movie",
+      genre: "Action",
+    });
+    res.json(movie);
+  } catch (error) {
+    res.status(500).json({ message: "Test movie failed", error });
+  }
 });
 
 // ✅ Routes
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/movies", require("./routes/movieRoutes"));
-app.use("/api/auth", require("./routes/authRoutes"));
 
+// Root route
 app.get("/", (req, res) => {
   res.send("API Running...");
 });
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
-});
+// ✅ Proper startup — wait for DB before listening
+const startServer = async () => {
+  try {
+    await connectDB();
+
+    app.listen(PORT, () => {
+      console.log(`✅ Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("❌ Server failed to start:", error);
+    process.exit(1);
+  }
+};
+
+startServer();
