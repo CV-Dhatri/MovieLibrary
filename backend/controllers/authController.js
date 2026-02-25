@@ -10,6 +10,7 @@ exports.register = async (req, res) => {
   try {
     // Check if user already exists
     const existingUser = await User.findOne({ email });
+
     if (existingUser) {
       return res.status(400).json({
         success: false,
@@ -21,7 +22,7 @@ exports.register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create user
-    const user = await User.create({
+    await User.create({
       name,
       email,
       password: hashedPassword,
@@ -50,6 +51,7 @@ exports.login = async (req, res) => {
   try {
     // Check user exists
     const user = await User.findOne({ email });
+
     if (!user) {
       return res.status(400).json({
         success: false,
@@ -59,6 +61,7 @@ exports.login = async (req, res) => {
 
     // Check password match
     const isMatch = await bcrypt.compare(password, user.password);
+
     if (!isMatch) {
       return res.status(400).json({
         success: false,
@@ -77,6 +80,40 @@ exports.login = async (req, res) => {
       success: true,
       token,
       user
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+
+
+// ✅ FORGOT PASSWORD
+exports.forgotPassword = async (req, res) => {
+  const { email, newPassword } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+
+    await user.save();
+
+    res.json({
+      success: true,
+      message: "Password reset successful"
     });
 
   } catch (error) {

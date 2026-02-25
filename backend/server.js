@@ -27,6 +27,8 @@ app.get("/test-movie", async (req, res) => {
 
 // ✅ Routes
 app.use("/api/auth", require("./routes/authRoutes"));
+app.use("/api/movies", require("./routes/movieRoutes"));
+app.use("/api/auth", require("./routes/authRoutes"));
 
 app.get("/", (req, res) => {
   res.send("API Running...");
