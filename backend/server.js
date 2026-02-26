@@ -23,6 +23,9 @@ connectDB();
 app.use("/api/auth", authRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/auth", require("./routes/authRoutes"));
+app.use("/api/movies", require("./routes/movieRoutes"));
+app.use("/api/auth", require("./routes/authRoutes"));
 
 // Root test route
 app.get("/", (req, res) => {
