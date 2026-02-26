@@ -8,6 +8,7 @@ const notificationRoutes = require("./routes/notificationRoutes");
 const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 
+
 dotenv.config();
 
 const app = express();
@@ -28,6 +29,8 @@ app.use("/api/movies", require("./routes/movieRoutes"));
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/borrows", require("./routes/borrowRoutes"));
 app.use("/api/reports", require("./routes/reportRoutes"));
+app.use("/api/reviews", require("./routes/reviewRoutes"));
+app.use("/api/watchlist", require("./routes/watchlistRoutes"));
 
 // Root test route
 app.get("/", (req, res) => {
