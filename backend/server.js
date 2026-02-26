@@ -26,6 +26,8 @@ app.use("/api/users", userRoutes);
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/movies", require("./routes/movieRoutes"));
 app.use("/api/auth", require("./routes/authRoutes"));
+app.use("/api/borrows", require("./routes/borrowRoutes"));
+app.use("/api/reports", require("./routes/reportRoutes"));
 
 // Root test route
 app.get("/", (req, res) => {
