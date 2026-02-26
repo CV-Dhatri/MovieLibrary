@@ -57,38 +57,32 @@ exports.borrowMovie = async (req, res) => {
 // PUT /api/borrows/:id/return - Return a movie
 exports.returnMovie = async (req, res) => {
   try {
-    const borrowId = req.params.id;
+    const borrow = await Borrow.findById(req.params.id);
+    if (!borrow || borrow.status === "returned") {
+      return res.status(404).json({ success: false, message: "Active borrow record not found" });
+    }
 
-    const borrowRecord = await Borrow.findById(borrowId);
-    if (!borrowRecord) return res.status(404).json({ message: "Record not found" });
-    if (borrowRecord.status === "returned") return res.status(400).json({ message: "Already returned" });
-
-    // 1. Set return date to today
-    const returnDate = new Date();
-    borrowRecord.returnDate = returnDate;
-
-    // 2. Determine if returned or overdue
-    if (returnDate > borrowRecord.dueDate) {
-      borrowRecord.status = "overdue";
+    // Set return date and check if overdue
+    borrow.returnDate = new Date();
+    if (borrow.returnDate > borrow.dueDate) {
+      borrow.status = "overdue"; 
     } else {
-      borrowRecord.status = "returned";
-    }
-    await borrowRecord.save();
-
-    // 3. Increase Movie Stock
-    const movie = await Movie.findById(borrowRecord.movie);
-    if (movie) {
-      movie.stockQuantity += 1;
-      await movie.save();
+      borrow.status = "returned";
     }
 
-    res.status(200).json({ success: true, data: borrowRecord });
+    await borrow.save();
+
+    // Increase stock by 1 using $inc
+    await Movie.findByIdAndUpdate(borrow.movie, { $inc: { stockQuantity: 1 } });
+
+    res.status(200).json({ success: true, message: "Movie returned successfully", borrow });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// GET /api/borrows/my-history
+// 3. Get Personal History
+// @route   GET /api/borrows/my-history
 exports.getMyBorrowHistory = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -99,13 +93,29 @@ exports.getMyBorrowHistory = async (req, res) => {
   }
 };
 
-// GET /api/borrows/all (Admin only)
+// 4. Get All Borrows (Admin Only)
 exports.getAllBorrows = async (req, res) => {
   try {
     const records = await Borrow.find()
       .populate("user", "name email")
       .populate("movie", "title stockQuantity");
     res.status(200).json({ success: true, data: records });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// 5. Get Overdue Records (Admin Only)
+exports.getOverdueBorrows = async (req, res) => {
+  try {
+    const overdue = await Borrow.find({ 
+      $or: [
+        { status: "overdue" },
+        { status: "borrowed", dueDate: { $lt: new Date() } }
+      ]
+    }).populate("user", "name").populate("movie", "title");
+    
+    res.status(200).json({ success: true, data: overdue });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
