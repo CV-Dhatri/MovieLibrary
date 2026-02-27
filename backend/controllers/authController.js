@@ -8,7 +8,14 @@ exports.register = async (req, res) => {
   const { name, email, password, role } = req.body;
 
   try {
-    // Check if user already exists
+    // Validation
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Name, email and password are required"
+      });
+    }
+
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -18,15 +25,14 @@ exports.register = async (req, res) => {
       });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
     await User.create({
       name,
       email,
       password: hashedPassword,
-      role
+      role: role || "member",
+      status: "active"
     });
 
     res.status(201).json({
@@ -49,7 +55,13 @@ exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Check user exists
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required"
+      });
+    }
+
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -59,7 +71,14 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Check password match
+    // 🚫 Blocked User Check
+    if (user.status === "blocked") {
+      return res.status(403).json({
+        success: false,
+        message: "Your account has been blocked. Contact admin."
+      });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
@@ -69,7 +88,6 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Generate JWT token
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
@@ -79,7 +97,13 @@ exports.login = async (req, res) => {
     res.json({
       success: true,
       token,
-      user
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        status: user.status
+      }
     });
 
   } catch (error) {
@@ -97,6 +121,13 @@ exports.forgotPassword = async (req, res) => {
   const { email, newPassword } = req.body;
 
   try {
+    if (!email || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and new password are required"
+      });
+    }
+
     const user = await User.findOne({ email });
 
     if (!user) {

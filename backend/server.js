@@ -13,6 +13,9 @@ const watchlistRoutes = require("./routes/watchlistRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const userRoutes = require("./routes/userRoutes");
 
+const Borrow = require("./models/Borrow");
+const Notification = require("./models/Notification");
+
 dotenv.config();
 
 const app = express();
@@ -23,6 +26,35 @@ app.use(express.json());
 
 // Database connection
 connectDB();
+
+
+// ✅ Overdue Checker Function
+const checkOverdueBorrows = async () => {
+  try {
+    const today = new Date();
+
+    const overdueBorrows = await Borrow.find({
+      status: "borrowed",
+      dueDate: { $lt: today }
+    });
+
+    for (const borrow of overdueBorrows) {
+      borrow.status = "overdue";
+      await borrow.save();
+
+      await Notification.create({
+        user: borrow.user,
+        message: "Your borrowed movie is overdue!",
+        type: "overdue"
+      });
+    }
+
+    console.log(`✅ Overdue check completed. Updated ${overdueBorrows.length} records.`);
+  } catch (error) {
+    console.error("Overdue check failed:", error.message);
+  }
+};
+
 
 // ✅ Routes
 app.use("/api/auth", authRoutes);
@@ -42,6 +74,7 @@ app.get("/", (req, res) => {
 // Server start
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`✅ Server running on port ${PORT}`);
+  await checkOverdueBorrows();
 });
