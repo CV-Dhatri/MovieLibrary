@@ -1,12 +1,39 @@
-    const Borrow = require("../models/borrow");
-const Movie = require("../models/Movie");
+const Movie = require("../models/movie");
+const User = require("../models/user");
+const Borrow = require("../models/borrow");
 
-// @desc    Get top 5 most borrowed movies
-// @route   GET /api/reports/most-borrowed
+// ✅ SUMMARY CARD DATA
+exports.getSummary = async (req, res) => {
+  try {
+    const totalMovies = await Movie.countDocuments();
+    const totalUsers = await User.countDocuments();
+    const totalBorrows = await Borrow.countDocuments();
+    const overdueCount = await Borrow.countDocuments({ status: "overdue" });
+
+    res.status(200).json({
+      success: true,
+      data: {
+        totalMovies,
+        totalUsers,
+        totalBorrows,
+        overdueCount,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// ✅ MOST BORROWED MOVIES
 exports.getMostBorrowed = async (req, res) => {
   try {
-    const report = await Borrow.aggregate([
-      { $group: { _id: "$movie", borrowCount: { $sum: 1 } } },
+    const data = await Borrow.aggregate([
+      {
+        $group: {
+          _id: "$movie",
+          borrowCount: { $sum: 1 },
+        },
+      },
       { $sort: { borrowCount: -1 } },
       { $limit: 5 },
       {
@@ -14,52 +41,70 @@ exports.getMostBorrowed = async (req, res) => {
           from: "movies",
           localField: "_id",
           foreignField: "_id",
-          as: "movieDetails",
+          as: "movie",
         },
       },
-      { $unwind: "$movieDetails" },
-      { $project: { _id: 0, title: "$movieDetails.title", borrowCount: 1 } }
+      { $unwind: "$movie" },
+      {
+        $project: {
+          _id: "$movie._id",
+          title: "$movie.title",
+          borrowCount: 1,
+        },
+      },
     ]);
 
-    res.status(200).json({ success: true, data: report });
+    res.json({ success: true, data });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
-// @desc    Get members with the most borrows
-// @route   GET /api/reports/active-members
+// ✅ ACTIVE MEMBERS (Most Borrows)
 exports.getActiveMembers = async (req, res) => {
   try {
-    const report = await Borrow.aggregate([
-      { $group: { _id: "$user", totalBorrows: { $sum: 1 } } },
-      { $sort: { totalBorrows: -1 } },
+    const data = await Borrow.aggregate([
+      {
+        $group: {
+          _id: "$user",
+          borrowCount: { $sum: 1 },
+        },
+      },
+      { $sort: { borrowCount: -1 } },
       { $limit: 5 },
       {
         $lookup: {
           from: "users",
           localField: "_id",
           foreignField: "_id",
-          as: "userDetails",
+          as: "user",
         },
       },
-      { $unwind: "$userDetails" },
-      { $project: { _id: 0, name: "$userDetails.name", totalBorrows: 1 } }
+      { $unwind: "$user" },
+      {
+        $project: {
+          _id: "$user._id",
+          name: "$user.name",
+          borrowCount: 1,
+        },
+      },
     ]);
 
-    res.status(200).json({ success: true, data: report });
+    res.json({ success: true, data });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
-// @desc    Count of overdue records
-// @route   GET /api/reports/overdue-summary
-exports.getOverdueSummary = async (req, res) => {
+// ✅ OVERDUE RECORDS
+exports.getOverdue = async (req, res) => {
   try {
-    const count = await Borrow.countDocuments({ status: "overdue" });
-    res.status(200).json({ success: true, overdueCount: count });
+    const overdue = await Borrow.find({ status: "overdue" })
+      .populate("user", "name")
+      .populate("movie", "title");
+
+    res.json({ success: true, data: overdue });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
