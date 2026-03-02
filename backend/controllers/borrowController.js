@@ -1,15 +1,13 @@
-const Borrow = require("../models/Borrow");
-const Movie = require("../models/Movie");
-const Notification = require("../models/Notification");
+const Borrow = require("../models/borrow");
+const Movie = require("../models/movie");
+const Notification = require("../models/notification");
 
-
-// ✅ BORROW MOVIE
+// BORROW MOVIE
 exports.borrowMovie = async (req, res) => {
   try {
     const { movieId } = req.body;
     const userId = req.user.id;
 
-    // Validation
     if (!movieId) {
       return res.status(400).json({
         success: false,
@@ -18,7 +16,6 @@ exports.borrowMovie = async (req, res) => {
     }
 
     const movie = await Movie.findById(movieId);
-
     if (!movie) {
       return res.status(404).json({
         success: false,
@@ -26,7 +23,6 @@ exports.borrowMovie = async (req, res) => {
       });
     }
 
-    // Check stock
     if (movie.stockQuantity <= 0) {
       return res.status(400).json({
         success: false,
@@ -34,7 +30,6 @@ exports.borrowMovie = async (req, res) => {
       });
     }
 
-    // Check borrow limit (max 3)
     const activeBorrows = await Borrow.countDocuments({
       user: userId,
       status: { $in: ["borrowed", "overdue"] }
@@ -47,22 +42,20 @@ exports.borrowMovie = async (req, res) => {
       });
     }
 
-    // Set due date (7 days)
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + 7);
 
     const borrowRecord = await Borrow.create({
       user: userId,
       movie: movieId,
+      borrowDate: new Date(),
       dueDate,
       status: "borrowed"
     });
 
-    // Decrease stock
     movie.stockQuantity -= 1;
     await movie.save();
 
-    // Create notification
     await Notification.create({
       user: userId,
       message: `You borrowed "${movie.title}". Due on ${dueDate.toDateString()}.`,
@@ -82,9 +75,7 @@ exports.borrowMovie = async (req, res) => {
   }
 };
 
-
-
-// ✅ RETURN MOVIE
+// RETURN MOVIE
 exports.returnMovie = async (req, res) => {
   try {
     const borrow = await Borrow.findById(req.params.id);
@@ -105,10 +96,8 @@ exports.returnMovie = async (req, res) => {
 
     borrow.returnDate = new Date();
     borrow.status = "returned";
-
     await borrow.save();
 
-    // Increase stock
     await Movie.findByIdAndUpdate(borrow.movie, {
       $inc: { stockQuantity: 1 }
     });
@@ -127,9 +116,7 @@ exports.returnMovie = async (req, res) => {
   }
 };
 
-
-
-// ✅ MY BORROW HISTORY
+// MY BORROW HISTORY
 exports.getMyBorrowHistory = async (req, res) => {
   try {
     const history = await Borrow.find({ user: req.user.id })
@@ -148,9 +135,7 @@ exports.getMyBorrowHistory = async (req, res) => {
   }
 };
 
-
-
-// ✅ ADMIN: ALL BORROWS
+// ADMIN: ALL BORROWS
 exports.getAllBorrows = async (req, res) => {
   try {
     const records = await Borrow.find()
@@ -170,14 +155,10 @@ exports.getAllBorrows = async (req, res) => {
   }
 };
 
-
-
-// ✅ ADMIN: OVERDUE RECORDS
+// ADMIN: OVERDUE
 exports.getOverdueBorrows = async (req, res) => {
   try {
-    const overdue = await Borrow.find({
-      status: "overdue"
-    })
+    const overdue = await Borrow.find({ status: "overdue" })
       .populate("user", "name")
       .populate("movie", "title");
 

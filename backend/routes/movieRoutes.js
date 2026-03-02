@@ -4,6 +4,7 @@ const router = express.Router();
 const movieController = require("../controllers/movieController");
 const authMiddleware = require("../middleware/authMiddleware");
 const adminMiddleware = require("../middleware/adminMiddleware");
+const Movie = require("../models/movie");
 
 
 // ✅ PUBLIC ROUTES

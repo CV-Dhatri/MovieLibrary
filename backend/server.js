@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
+const Borrow = require("./models/borrow");
+const Notification = require("./models/notification");
 
 // Route imports
 const authRoutes = require("./routes/authRoutes");
@@ -13,8 +15,8 @@ const watchlistRoutes = require("./routes/watchlistRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const userRoutes = require("./routes/userRoutes");
 
-const Borrow = require("./models/Borrow");
-const Notification = require("./models/Notification");
+
+
 
 dotenv.config();
 
@@ -27,7 +29,6 @@ app.use(express.json());
 // Database connection
 connectDB();
 
-
 // ✅ Overdue Checker Function
 const checkOverdueBorrows = async () => {
   try {
@@ -35,7 +36,7 @@ const checkOverdueBorrows = async () => {
 
     const overdueBorrows = await Borrow.find({
       status: "borrowed",
-      dueDate: { $lt: today }
+      dueDate: { $lt: today },
     });
 
     for (const borrow of overdueBorrows) {
@@ -45,16 +46,17 @@ const checkOverdueBorrows = async () => {
       await Notification.create({
         user: borrow.user,
         message: "Your borrowed movie is overdue!",
-        type: "overdue"
+        type: "overdue",
       });
     }
 
-    console.log(`✅ Overdue check completed. Updated ${overdueBorrows.length} records.`);
+    console.log(
+      `✅ Overdue check completed. Updated ${overdueBorrows.length} records.`
+    );
   } catch (error) {
     console.error("Overdue check failed:", error.message);
   }
 };
-
 
 // ✅ Routes
 app.use("/api/auth", authRoutes);
