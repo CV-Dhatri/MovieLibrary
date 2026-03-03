@@ -1,18 +1,19 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../../components/AdminLayout";
 import API from "../../api/axios";
+import "./ManageMovies.css";
 
 const ManageMovies = () => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [editingId, setEditingId] = useState(null);
 
-  const [newMovie, setNewMovie] = useState({
+  const [form, setForm] = useState({
     title: "",
     genre: "",
     stockQuantity: "",
   });
 
-  // Fetch Movies
   useEffect(() => {
     fetchMovies();
   }, []);
@@ -20,7 +21,7 @@ const ManageMovies = () => {
   const fetchMovies = async () => {
     try {
       const res = await API.get("/movies");
-      setMovies(res.data.data); // IMPORTANT
+      setMovies(res.data.data);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -28,10 +29,38 @@ const ManageMovies = () => {
     }
   };
 
-  // Delete Movie
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      if (editingId) {
+        await API.put(`/movies/${editingId}`, form);
+      } else {
+        await API.post("/movies", form);
+      }
+
+      setForm({ title: "", genre: "", stockQuantity: "" });
+      setEditingId(null);
+      fetchMovies();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleEdit = (movie) => {
+    setForm({
+      title: movie.title,
+      genre: movie.genre,
+      stockQuantity: movie.stockQuantity,
+    });
+    setEditingId(movie._id);
+  };
+
   const deleteMovie = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this movie?"))
-      return;
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this movie?"
+    );
+    if (!confirmDelete) return;
 
     try {
       await API.delete(`/movies/${id}`);
@@ -41,101 +70,107 @@ const ManageMovies = () => {
     }
   };
 
-  // Add Movie
-  const addMovie = async (e) => {
-    e.preventDefault();
-
-    try {
-      await API.post("/movies", newMovie);
-      fetchMovies();
-      setNewMovie({ title: "", genre: "", stockQuantity: "" });
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="flex justify-center items-center h-64">
+          <div className="text-lg font-semibold text-indigo-600 animate-pulse">
+            Loading movies...
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
-    <AdminLayout>
-      <h2 className="text-2xl font-bold mb-6">Manage Movies</h2>
+  <AdminLayout>
+    <div className="manage-page">
+      <div className="manage-card">
 
-      {/* Add Movie Form */}
-      <form
-        onSubmit={addMovie}
-        className="bg-white p-6 rounded-2xl shadow-lg mb-8 flex gap-4"
-      >
-        <input
-          type="text"
-          placeholder="Title"
-          value={newMovie.title}
-          onChange={(e) =>
-            setNewMovie({ ...newMovie, title: e.target.value })
-          }
-          className="border p-2 rounded w-full"
-          required
-        />
+        <h2 className="manage-title">Manage Movies</h2>
 
-        <input
-          type="text"
-          placeholder="Genre"
-          value={newMovie.genre}
-          onChange={(e) =>
-            setNewMovie({ ...newMovie, genre: e.target.value })
-          }
-          className="border p-2 rounded w-full"
-          required
-        />
+        <div className="form-section">
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              placeholder="Title"
+              value={form.title}
+              onChange={(e) =>
+                setForm({ ...form, title: e.target.value })
+              }
+              required
+            />
 
-        <input
-          type="number"
-          placeholder="Stock Quantity"
-          value={newMovie.stockQuantity}
-          onChange={(e) =>
-            setNewMovie({ ...newMovie, stockQuantity: e.target.value })
-          }
-          className="border p-2 rounded w-full"
-          required
-        />
+            <input
+              type="text"
+              placeholder="Genre"
+              value={form.genre}
+              onChange={(e) =>
+                setForm({ ...form, genre: e.target.value })
+              }
+              required
+            />
 
-        <button className="bg-indigo-600 text-white px-4 rounded">
-          Add
-        </button>
-      </form>
+            <input
+              type="number"
+              placeholder="Stock"
+              value={form.stockQuantity}
+              onChange={(e) =>
+                setForm({ ...form, stockQuantity: e.target.value })
+              }
+              required
+            />
 
-      {loading && <p>Loading movies...</p>}
+            <button type="submit">
+              {editingId ? "Update Movie" : "Add Movie"}
+            </button>
+          </form>
+        </div>
 
-      {/* Movie Table */}
-      <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-        <table className="w-full text-left">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="px-6 py-4">Title</th>
-              <th className="px-6 py-4">Genre</th>
-              <th className="px-6 py-4">Stock</th>
-              <th className="px-6 py-4">Action</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {movies.map((movie) => (
-              <tr key={movie._id} className="border-t hover:bg-gray-50">
-                <td className="px-6 py-4">{movie.title}</td>
-                <td className="px-6 py-4">{movie.genre}</td>
-                <td className="px-6 py-4">{movie.stockQuantity}</td>
-                <td className="px-6 py-4">
-                  <button
-                    onClick={() => deleteMovie(movie._id)}
-                    className="bg-red-500 text-white px-3 py-1 rounded"
-                  >
-                    Delete
-                  </button>
-                </td>
+        {movies.length === 0 ? (
+          <p>No movies available</p>
+        ) : (
+          <table className="movies-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Genre</th>
+                <th>Stock</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {movies.map((movie) => (
+                <tr key={movie._id}>
+                  <td>{movie.title}</td>
+                  <td>{movie.genre}</td>
+                  <td>{movie.stockQuantity}</td>
+                  <td>
+                    <button
+                      onClick={() => handleEdit(movie)}
+                      className="edit-btn"
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      onClick={() => deleteMovie(movie._id)}
+                      className="delete-btn"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+
       </div>
-    </AdminLayout>
-  );
+    </div>
+  </AdminLayout>
+);
 };
 
 export default ManageMovies;

@@ -1,86 +1,57 @@
-.admin-layout {
-  display: flex;
-  min-height: 100vh;
-  background: linear-gradient(to right, #0f172a, #312e81);
-  color: white;
+.dashboard-page {
+  padding: 20px;
 }
 
-/* Sidebar */
-.sidebar {
-  width: 250px;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(10px);
-  padding: 30px 20px;
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.logo {
-  margin-bottom: 40px;
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-}
-
-.sidebar li {
-  margin-bottom: 20px;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-.sidebar li:hover {
-  color: #60a5fa;
-}
-
-/* Main Content */
-.main-content {
-  flex: 1;
+.dashboard-card {
+  background: linear-gradient(135deg, #ede9fe, #d8b4fe);
+  border-radius: 25px;
   padding: 40px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+  color: #1f2937;
 }
 
-.admin-title {
+.dashboard-title {
+  font-size: 32px;
+  font-weight: 700;
   margin-bottom: 40px;
-  font-size: 28px;
 }
 
-/* Cards */
-.card-container {
-  display: flex;
-  gap: 30px;
-  flex-wrap: wrap;
+/* Summary Grid */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 25px;
 }
 
-.card {
-  background: #1e293b;
+.stat-box {
+  background: white;
   padding: 30px;
-  width: 260px;
-  border-radius: 14px;
-  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 20px;
   text-align: center;
+  transition: 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0px 20px 40px rgba(99, 102, 241, 0.6);
+.stat-box:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
-.card-icon {
-  font-size: 35px;
+.stat-icon {
+  font-size: 40px;
   margin-bottom: 15px;
-  color: #60a5fa;
 }
 
-.card h3 {
+.stat-label {
+  font-size: 14px;
+  color: #6b7280;
   margin-bottom: 10px;
-  font-size: 18px;
-  color: #cbd5e1;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-.card p {
-  font-size: 28px;
-  font-weight: bold;
+.stat-value {
+  font-size: 34px;
+  font-weight: 800;
 }
