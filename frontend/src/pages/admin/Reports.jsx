@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../../components/AdminLayout";
 import API from "../../api/axios";
-
+import "./Reports.css";
 const Reports = () => {
   const [summary, setSummary] = useState({});
   const [mostBorrowed, setMostBorrowed] = useState([]);
@@ -35,79 +35,83 @@ const Reports = () => {
   if (loading) return <p>Loading reports...</p>;
 
   return (
-    <AdminLayout>
-      <h2 className="text-2xl font-bold mb-8">Reports</h2>
+  <AdminLayout>
+    <div className="reports-page">
+      <div className="reports-card">
 
-      {/* Summary Cards */}
-      <div className="flex gap-6 mb-8">
-        <div className="bg-white p-6 rounded-xl shadow flex-1">
-          <h3>Total Movies</h3>
-          <p className="text-3xl font-bold">{summary.totalMovies || 0}</p>
-        </div>
+        <h2 className="reports-title">Reports</h2>
 
-        <div className="bg-white p-6 rounded-xl shadow flex-1">
-          <h3>Total Users</h3>
-          <p className="text-3xl font-bold">{summary.totalUsers || 0}</p>
-        </div>
+        {/* Summary */}
+        <div className="summary-grid">
+          <div className="summary-box">
+            <h3>Total Movies</h3>
+            <p>{summary.totalMovies || 0}</p>
+          </div>
 
-        <div className="bg-white p-6 rounded-xl shadow flex-1">
-          <h3>Total Borrows</h3>
-          <p className="text-3xl font-bold">{summary.totalBorrows || 0}</p>
-        </div>
+          <div className="summary-box">
+            <h3>Total Users</h3>
+            <p>{summary.totalUsers || 0}</p>
+          </div>
 
-        <div className="bg-white p-6 rounded-xl shadow flex-1">
-          <h3>Overdue</h3>
-          <p className="text-3xl font-bold text-red-500">
-            {summary.overdueCount || 0}
-          </p>
-        </div>
-      </div>
+          <div className="summary-box">
+            <h3>Total Borrows</h3>
+            <p>{summary.totalBorrows || 0}</p>
+          </div>
 
-      {/* Most Borrowed */}
-      <div className="bg-white p-6 rounded-xl shadow mb-8">
-        <h3 className="text-xl font-semibold mb-4">Most Borrowed Movies</h3>
-        {mostBorrowed.length === 0 ? (
-          <p>No borrow data available.</p>
-        ) : (
-          mostBorrowed.map((movie) => (
-            <p key={movie._id}>
-              {movie.title} — {movie.borrowCount} borrows
+          <div className="summary-box">
+            <h3>Overdue</h3>
+            <p style={{ color: "#dc2626" }}>
+              {summary.overdueCount || 0}
             </p>
-          ))
-        )}
-      </div>
+          </div>
+        </div>
 
-      {/* Active Members */}
-      <div className="bg-white p-6 rounded-xl shadow mb-8">
-        <h3 className="text-xl font-semibold mb-4">Active Members</h3>
-        {activeMembers.length === 0 ? (
-          <p>No active members data.</p>
-        ) : (
-          activeMembers.map((user) => (
-            <p key={user._id}>
-              {user.name} — {user.borrowCount} borrows
-            </p>
-          ))
-        )}
-      </div>
+        {/* Most Borrowed */}
+        <div className="section-card">
+          <h3>Most Borrowed Movies</h3>
+          {mostBorrowed.length === 0 ? (
+            <p>No borrow data available.</p>
+          ) : (
+            mostBorrowed.map((movie) => (
+              <p key={movie._id}>
+                {movie.title} — {movie.borrowCount} borrows
+              </p>
+            ))
+          )}
+        </div>
 
-      {/* Overdue */}
-      <div className="bg-white p-6 rounded-xl shadow">
-        <h3 className="text-xl font-semibold mb-4 text-red-500">
-          Overdue Records
-        </h3>
-        {overdue.length === 0 ? (
-          <p>No overdue records.</p>
-        ) : (
-          overdue.map((b) => (
-            <p key={b._id}>
-              {b.user?.name} — {b.movie?.title}
-            </p>
-          ))
-        )}
+        {/* Active Members */}
+        <div className="section-card">
+          <h3>Active Members</h3>
+          {activeMembers.length === 0 ? (
+            <p>No active members data.</p>
+          ) : (
+            activeMembers.map((user) => (
+              <p key={user._id}>
+                {user.name} — {user.borrowCount} borrows
+              </p>
+            ))
+          )}
+        </div>
+
+        {/* Overdue */}
+        <div className="section-card">
+          <h3 className="overdue-title">Overdue Records</h3>
+          {overdue.length === 0 ? (
+            <p>No overdue records.</p>
+          ) : (
+            overdue.map((b) => (
+              <p key={b._id}>
+                {b.user?.name} — {b.movie?.title}
+              </p>
+            ))
+          )}
+        </div>
+
       </div>
-    </AdminLayout>
-  );
+    </div>
+  </AdminLayout>
+);
 };
 
 export default Reports;

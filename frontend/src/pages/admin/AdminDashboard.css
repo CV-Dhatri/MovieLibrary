@@ -1,82 +1,57 @@
-/* Background */
-.dashboard-container {
-  min-height: 100vh;
-  padding: 40px;
+.dashboard-page {
+  padding: 20px;
+}
+
+.dashboard-card {
   background: linear-gradient(135deg, #ede9fe, #d8b4fe);
-  font-family: 'Segoe UI', sans-serif;
+  border-radius: 25px;
+  padding: 40px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+  color: #1f2937;
 }
 
-.center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Header */
-.dashboard-header h1 {
-  font-size: 40px;
-  font-weight: bold;
-  color: #1e1e2f;
-}
-
-.dashboard-header p {
-  color: #555;
-  margin-top: 8px;
+.dashboard-title {
+  font-size: 32px;
+  font-weight: 700;
   margin-bottom: 40px;
 }
 
-/* Grid */
-.card-grid {
+/* Summary Grid */
+.dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 25px;
 }
 
-/* Card */
-.dashboard-card {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(15px);
-  padding: 25px;
+.stat-box {
+  background: white;
+  padding: 30px;
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  text-align: center;
   transition: 0.3s ease;
-  cursor: pointer;
+  position: relative;
+  overflow: hidden;
 }
 
-.dashboard-card:hover {
+.stat-box:hover {
   transform: translateY(-8px);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
-/* Card Text */
-.card-title {
+.stat-icon {
+  font-size: 40px;
+  margin-bottom: 15px;
+}
+
+.stat-label {
   font-size: 14px;
-  color: #666;
+  color: #6b7280;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-.card-value {
-  font-size: 36px;
-  font-weight: bold;
-  margin-top: 5px;
-  color: #222;
-}
-
-.card-icon {
-  font-size: 45px;
-}
-
-/* Loading */
-.loading {
-  font-size: 22px;
-  color: #6d28d9;
-  animation: pulse 1.2s infinite;
-}
-
-@keyframes pulse {
-  0% { opacity: 0.5; }
-  50% { opacity: 1; }
-  100% { opacity: 0.5; }
+.stat-value {
+  font-size: 34px;
+  font-weight: 800;
 }

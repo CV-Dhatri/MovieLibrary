@@ -33,34 +33,52 @@ const AdminDashboard = () => {
   }
 
   return (
-    <AdminLayout>
-      <div className="dashboard-container">
-        <div className="dashboard-header">
-          <h1>Admin Dashboard</h1>
-          <p>Overview of your movie management system</p>
+  <AdminLayout>
+    <div className="dashboard-page">
+      <div className="dashboard-card">
+
+        <h2 className="dashboard-title">Admin Dashboard</h2>
+
+        <div className="dashboard-grid">
+
+          <div className="stat-box">
+            <div className="stat-icon">🎬</div>
+            <div className="stat-label">Total Movies</div>
+            <div className="stat-value">
+              {summary.totalMovies || 0}
+            </div>
+          </div>
+
+          <div className="stat-box">
+            <div className="stat-icon">👥</div>
+            <div className="stat-label">Total Users</div>
+            <div className="stat-value">
+              {summary.totalUsers || 0}
+            </div>
+          </div>
+
+          <div className="stat-box">
+            <div className="stat-icon">📦</div>
+            <div className="stat-label">Total Borrows</div>
+            <div className="stat-value">
+              {summary.totalBorrows || 0}
+            </div>
+          </div>
+
+          <div className="stat-box">
+            <div className="stat-icon">⚠️</div>
+            <div className="stat-label">Overdue</div>
+            <div className="stat-value" style={{ color: "#dc2626" }}>
+              {summary.overdueCount || 0}
+            </div>
+          </div>
+
         </div>
 
-        <div className="card-grid">
-          <DashboardCard title="Total Movies" value={summary.totalMovies} icon="🎬" />
-          <DashboardCard title="Total Users" value={summary.totalUsers} icon="👥" />
-          <DashboardCard title="Total Borrows" value={summary.totalBorrows} icon="📦" />
-          <DashboardCard title="Overdue" value={summary.overdueCount} icon="⚠️" />
-        </div>
       </div>
-    </AdminLayout>
-  );
-};
-
-const DashboardCard = ({ title, value, icon }) => {
-  return (
-    <div className="dashboard-card">
-      <div>
-        <p className="card-title">{title}</p>
-        <h2 className="card-value">{value || 0}</h2>
-      </div>
-      <div className="card-icon">{icon}</div>
     </div>
-  );
+  </AdminLayout>
+);
 };
 
 export default AdminDashboard;

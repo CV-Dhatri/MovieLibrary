@@ -83,102 +83,80 @@ const ManageMovies = () => {
   }
 
   return (
-    <AdminLayout>
-      <div className="p-10">
-      <div className="bg-white rounded-3xl shadow-xl p-8">
+  <AdminLayout>
+    <div className="manage-page">
+      <div className="manage-card">
 
-        <h2 style={{ color: "red", fontSize: "50px" }}>
-  Manage Movies
-</h2>
+        <h2 className="manage-title">Manage Movies</h2>
 
-      {/* Form Card */}
-      <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
-        <form onSubmit={handleSubmit} className="flex gap-4 flex-wrap">
-          <input
-            type="text"
-            placeholder="Title"
-            value={form.title}
-            onChange={(e) =>
-              setForm({ ...form, title: e.target.value })
-            }
-            required
-            className="border p-3 rounded-lg w-full md:w-1/4"
-          />
+        <div className="form-section">
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              placeholder="Title"
+              value={form.title}
+              onChange={(e) =>
+                setForm({ ...form, title: e.target.value })
+              }
+              required
+            />
 
-          <input
-            type="text"
-            placeholder="Genre"
-            value={form.genre}
-            onChange={(e) =>
-              setForm({ ...form, genre: e.target.value })
-            }
-            required
-            className="border p-3 rounded-lg w-full md:w-1/4"
-          />
+            <input
+              type="text"
+              placeholder="Genre"
+              value={form.genre}
+              onChange={(e) =>
+                setForm({ ...form, genre: e.target.value })
+              }
+              required
+            />
 
-          <input
-            type="number"
-            placeholder="Stock"
-            value={form.stockQuantity}
-            onChange={(e) =>
-              setForm({ ...form, stockQuantity: e.target.value })
-            }
-            required
-            className="border p-3 rounded-lg w-full md:w-1/4"
-          />
+            <input
+              type="number"
+              placeholder="Stock"
+              value={form.stockQuantity}
+              onChange={(e) =>
+                setForm({ ...form, stockQuantity: e.target.value })
+              }
+              required
+            />
 
-          <button
-            type="submit"
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg transition"
-          >
-            {editingId ? "Update Movie" : "Add Movie"}
-          </button>
-        </form>
-      </div>
+            <button type="submit">
+              {editingId ? "Update Movie" : "Add Movie"}
+            </button>
+          </form>
+        </div>
 
-      {/* Movies Table */}
-      <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
         {movies.length === 0 ? (
-          <div className="text-center py-16 text-gray-500">
-            <div className="text-5xl mb-4">🎬</div>
-            <p className="text-lg font-medium">
-              No movies available
-            </p>
-            <p className="text-sm">
-              Add movies to see them listed here.
-            </p>
-          </div>
+          <p>No movies available</p>
         ) : (
-          <table className="w-full border-collapse">
-            <thead className="bg-indigo-50 text-indigo-700 uppercase text-sm">
+          <table className="movies-table">
+            <thead>
               <tr>
-                <th className="px-6 py-4 text-left">Title</th>
-                <th className="px-6 py-4 text-left">Genre</th>
-                <th className="px-6 py-4 text-left">Stock</th>
-                <th className="px-6 py-4 text-left">Actions</th>
+                <th>Title</th>
+                <th>Genre</th>
+                <th>Stock</th>
+                <th>Actions</th>
               </tr>
             </thead>
 
             <tbody>
               {movies.map((movie) => (
-                <tr
-                  key={movie._id}
-                  className="border-t hover:bg-indigo-50 transition"
-                >
-                  <td className="px-6 py-4">{movie.title}</td>
-                  <td className="px-6 py-4">{movie.genre}</td>
-                  <td className="px-6 py-4">{movie.stockQuantity}</td>
-                  <td className="px-6 py-4 flex gap-2">
+                <tr key={movie._id}>
+                  <td>{movie.title}</td>
+                  <td>{movie.genre}</td>
+                  <td>{movie.stockQuantity}</td>
+                  <td>
                     <button
                       onClick={() => handleEdit(movie)}
-                      className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-lg"
+                      className="edit-btn"
                     >
                       Edit
                     </button>
 
                     <button
                       onClick={() => deleteMovie(movie._id)}
-                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg"
+                      className="delete-btn"
                     >
                       Delete
                     </button>
@@ -188,11 +166,11 @@ const ManageMovies = () => {
             </tbody>
           </table>
         )}
+
       </div>
-      </div>
-      </div>
-    </AdminLayout>
-  );
+    </div>
+  </AdminLayout>
+);
 };
 
 export default ManageMovies;
