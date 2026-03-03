@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 
 export default function MovieDetail() {
   const { id } = useParams();
+console.log("Movie ID:", id);
   const [movie, setMovie] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);

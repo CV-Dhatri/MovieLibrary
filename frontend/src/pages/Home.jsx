@@ -17,9 +17,10 @@ export default function Home() {
         Object.entries(filters).filter(([_, v]) => v !== '')
       );
       const { data } = await API.get('/movies', { params });
-      setMovies(data);
+      console.log(data);
+      setMovies(data.data);
     } catch (err) {
-      console.error('Failed to fetch movies');
+      console.error(err);
     } finally {
       setLoading(false);
     }

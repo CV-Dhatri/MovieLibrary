@@ -25,10 +25,41 @@ function App() {
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/movies/:id" element={<MovieDetail />} />
-          <Route path="/borrow-history" element={<BorrowHistory />} />
-          <Route path="/watchlist" element={<Watchlist />} />
+          <Route
+  path="/home"
+  element={
+    <ProtectedRoute>
+      <Home />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/movies/:id"
+  element={
+    <ProtectedRoute>
+      <MovieDetail />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/borrow-history"
+  element={
+    <ProtectedRoute>
+      <BorrowHistory />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/watchlist"
+  element={
+    <ProtectedRoute>
+      <Watchlist />
+    </ProtectedRoute>
+  }
+/>
 <Route
   path="/admin"
   element={
