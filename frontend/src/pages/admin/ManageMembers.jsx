@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../../components/AdminLayout";
 import API from "../../api/axios";
-
+import "./ManageMembers.css";
 const ManageMembers = () => {
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -35,44 +35,56 @@ const ManageMembers = () => {
   };
 
   return (
-    <AdminLayout>
-      <h2 className="text-2xl font-bold mb-6">Manage Members</h2>
+  <AdminLayout>
+    <div className="members-page">
+      <div className="members-card">
 
-      {loading && <p>Loading members...</p>}
+        <h2 className="members-title">Manage Members</h2>
 
-      <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-        <table className="w-full text-left">
-          <thead className="bg-gray-100">
+        {loading && <p>Loading members...</p>}
+
+        <table className="members-table">
+          <thead>
             <tr>
-              <th className="px-6 py-4">Name</th>
-              <th className="px-6 py-4">Email</th>
-              <th className="px-6 py-4">Role</th>
-              <th className="px-6 py-4">Status</th>
-              <th className="px-6 py-4">Action</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Action</th>
             </tr>
           </thead>
 
           <tbody>
             {members.map((member) => (
-              <tr key={member._id} className="border-t">
-                <td className="px-6 py-4">{member.name}</td>
-                <td className="px-6 py-4">{member.email}</td>
-                <td className="px-6 py-4">{member.role}</td>
+              <tr key={member._id}>
+                <td>{member.name}</td>
+                <td>{member.email}</td>
+                <td>{member.role}</td>
 
-                <td className="px-6 py-4">
-                  {member.status === "blocked" ? "Blocked" : "Active"}
+                <td>
+                  <span
+                    className={
+                      member.status === "blocked"
+                        ? "status-blocked"
+                        : "status-active"
+                    }
+                  >
+                    {member.status === "blocked"
+                      ? "Blocked"
+                      : "Active"}
+                  </span>
                 </td>
 
-                <td className="px-6 py-4">
+                <td>
                   <button
                     onClick={() =>
                       toggleBlock(member._id, member.status)
                     }
-                    className={`px-3 py-1 rounded text-white ${
+                    className={
                       member.status === "blocked"
-                        ? "bg-green-500"
-                        : "bg-red-500"
-                    }`}
+                        ? "unblock-btn"
+                        : "block-btn"
+                    }
                   >
                     {member.status === "blocked"
                       ? "Unblock"
@@ -83,9 +95,11 @@ const ManageMembers = () => {
             ))}
           </tbody>
         </table>
+
       </div>
-    </AdminLayout>
-  );
+    </div>
+  </AdminLayout>
+);
 };
 
 export default ManageMembers;

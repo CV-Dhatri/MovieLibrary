@@ -1,0 +1,77 @@
+/* Page wrapper */
+.members-page {
+  padding: 40px;
+}
+
+/* Purple Card */
+.members-card {
+  background: linear-gradient(135deg, #ede9fe, #d8b4fe);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  color: #1f2937;
+}
+
+/* Title */
+.members-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 25px;
+}
+
+/* Table */
+.members-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.members-table th {
+  text-align: left;
+  padding: 14px;
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.members-table td {
+  padding: 14px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.members-table tr:hover {
+  background: #f9fafb;
+}
+
+/* Status Badge */
+.status-active {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.status-blocked {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+/* Buttons */
+.block-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.unblock-btn {
+  background: #16a34a;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
