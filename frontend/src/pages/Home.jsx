@@ -16,11 +16,14 @@ export default function Home() {
       const params = Object.fromEntries(
         Object.entries(filters).filter(([_, v]) => v !== '')
       );
+
       const { data } = await API.get('/movies', { params });
-      console.log(data);
-      setMovies(data.data);
+
+      // ✅ FIX: backend returns { success, data }
+      setMovies(data.data || []);
+
     } catch (err) {
-      console.error(err);
+      console.error('Failed to fetch movies');
     } finally {
       setLoading(false);
     }
