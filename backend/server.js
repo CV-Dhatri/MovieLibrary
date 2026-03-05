@@ -15,9 +15,6 @@ const watchlistRoutes = require("./routes/watchlistRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const userRoutes = require("./routes/userRoutes");
 
-
-
-
 dotenv.config();
 
 const app = express();
@@ -25,9 +22,6 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
-
-// Database connection
-connectDB();
 
 // ✅ Overdue Checker Function
 const checkOverdueBorrows = async () => {
@@ -76,7 +70,20 @@ app.get("/", (req, res) => {
 // Server start
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, async () => {
-  console.log(`✅ Server running on port ${PORT}`);
-  await checkOverdueBorrows();
-});
+// ✅ Proper startup — wait for DB before listening
+const startServer = async () => {
+  try {
+    await connectDB();
+
+    app.listen(PORT, async () => {
+      console.log(`✅ Server running on port ${PORT}`);
+      await checkOverdueBorrows(); // run overdue check at startup
+    });
+
+  } catch (error) {
+    console.error("❌ Server failed to start:", error);
+    process.exit(1);
+  }
+};
+
+startServer();

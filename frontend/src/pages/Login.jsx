@@ -41,17 +41,13 @@ export default function Login() {
     'https://image.tmdb.org/t/p/w300/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
     'https://image.tmdb.org/t/p/w300/hek3koDUyRQk7FIhPXsa6mT2Zc3.jpg',
     'https://image.tmdb.org/t/p/w300/udDclJoHjfjb8Ekgsd4FDteOkCU.jpg',
-    'https://image.tmdb.org/t/p/w300/ArAN0l6TW9BycrLovXfhRG9DVNY.jpg',
-    'https://image.tmdb.org/t/p/w300/nkayOAUBUu4mMvyNf9iHSUiPjF1.jpg',
-    'https://image.tmdb.org/t/p/w300/ggFHVNu6YYI5L9pCfOacjizRGt.jpg',
-    'https://image.tmdb.org/t/p/w300/t6HIqrRAclMCA60NsSbj3asfQkK.jpg',
-    'https://image.tmdb.org/t/p/w300/sv1xJUazXoQuIDtiys4nty9jBkP.jpg',
-    'https://image.tmdb.org/t/p/w300/yFihWxQcmqcaBR31QM6Y8gT6aYV.jpg',
-    'https://image.tmdb.org/t/p/w300/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg',
-    'https://image.tmdb.org/t/p/w300/6CoRTJTmijhBLJTUNoVSUNxZMEI.jpg',
-    'https://image.tmdb.org/t/p/w300/kqjL17yufvn9OVLyXYpvtyrFfak.jpg',
-    'https://image.tmdb.org/t/p/w300/NNxYkU70HPurnNCSiCjYAmacwm.jpg',
-    'https://image.tmdb.org/t/p/w300/gPbM0MK8CP8A174rmUwGsADNYKD.jpg',
+    'https://image.tmdb.org/t/p/w300/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg',
+    'https://image.tmdb.org/t/p/w300/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg',
+    'https://image.tmdb.org/t/p/w300/rktDFPbfHfUbArZ6OOOKsXcv0Bm.jpg',
+    'https://image.tmdb.org/t/p/w300/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg',
+    'https://image.tmdb.org/t/p/w300/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
+    'https://image.tmdb.org/t/p/w300/hek3koDUyRQk7FIhPXsa6mT2Zc3.jpg',
+    'https://image.tmdb.org/t/p/w300/udDclJoHjfjb8Ekgsd4FDteOkCU.jpg',
   ];
 
   return (
@@ -103,7 +99,19 @@ export default function Login() {
               onChange={e => setForm({ ...form, password: e.target.value })}
             />
             <button
-              style={loading ? styles.btnDisabled : styles.btn}
+  style={loading ? styles.btnDisabled : styles.btn}
+  onMouseEnter={(e)=>{
+    if(!loading){
+      e.target.style.transform="translateY(-2px)";
+      e.target.style.boxShadow="0 8px 18px rgba(0,0,0,0.45)";
+    }
+  }}
+  onMouseLeave={(e)=>{
+    if(!loading){
+      e.target.style.transform="translateY(0)";
+      e.target.style.boxShadow="0 4px 14px rgba(0,0,0,0.35)";
+    }
+  }}
               type="submit"
               disabled={loading}
             >
@@ -247,21 +255,22 @@ const styles = {
     boxSizing: 'border-box',
   },
 
-  btn: {
-    width: '100%',
-    padding: '14px',
-    backgroundColor: '#2980B9',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '8px',
-    fontSize: '16px',
-    fontWeight: '700',
-    cursor: 'pointer',
-    marginTop: '4px',
-    transition: 'background 0.2s',
-  },
+  btn:{
+  width:"100%",
+  padding:"13px",
+  background:"linear-gradient(135deg,#2980B9,#3498DB)",
+  color:"#fff",
+  border:"none",
+  borderRadius:"8px",
+  fontSize:"15px",
+  fontWeight:"700",
+  cursor:"pointer",
+  marginTop:"4px",
+  transition:"all 0.25s ease",
+  boxShadow:"0 4px 14px rgba(0,0,0,0.35)"
+},
 
-  btnDisabled: {
+  btnDisabled:{
     width: '100%',
     padding: '14px',
     backgroundColor: '#1a5276',
