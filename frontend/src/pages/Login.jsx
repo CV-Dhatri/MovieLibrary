@@ -11,19 +11,26 @@ export default function Login() {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const { data } = await API.post('/auth/login', form);
-      login(data.user, data.token);
-      toast.success('Welcome back!');
-      navigate('/home');
-    } catch (err) {
-      toast.error('Invalid email or password');
-    } finally {
-      setLoading(false);
+  e.preventDefault();
+  setLoading(true);
+  try {
+    const { data } = await API.post('/auth/login', form);
+
+    login(data.user, data.token);
+    toast.success('Welcome back!');
+
+    if (data.user.role === "admin") {
+      navigate("/admin");
+    } else {
+      navigate("/home");
     }
-  };
+
+  } catch (err) {
+    toast.error('Invalid email or password');
+  } finally {
+    setLoading(false);
+  }
+};
 
   // Movie posters grid (using public poster images)
   const posters = [
